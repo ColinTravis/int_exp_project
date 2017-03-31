@@ -3,6 +3,9 @@ var playing = false;
 var value = 0;
 var x= 100;
 var y = 100;
+var spinner = [];
+var exponent = 0.0;
+var speed = 0.5;
 
 function setup() {
 	createCanvas(windowWidth,windowHeight)
@@ -15,7 +18,10 @@ function setup() {
 	osc.freq(240);
 	osc.amp(0);
 	osc.start();
-	frameRate(5)
+	// frameRate(5)
+	frameRate(30)
+
+	spinner = ["image1.jpg","image2.jpg","image3.jpg","image4.jpg","image5.jpg"]
 }
 
 function redScreen(){
@@ -38,29 +44,31 @@ function draw(){
 
 
 // ========= TOGGLES RED SCREEN AND SINE
-redScreen()
+// redScreen()
 
 // ============= FOR MOVING OBJECT ON SCREEN (NEEDS FRAMERATE ADJUSTED)
-	// if (keyIsDown(LEFT_ARROW))
-  //   x-=5;
-	//
-  // if (keyIsDown(RIGHT_ARROW))
-  //   x+=5;
-	//
-  // if (keyIsDown(UP_ARROW))
-  //   y-=5;
-	//
-  // if (keyIsDown(DOWN_ARROW))
-  //   y+=5;
-	//
-  // clear();
-  // fill(255, 0, 0);
-  // ellipse(x, y, 50, 50);
+	if (keyIsDown(65))
+    x-=5;
+
+  if (keyIsDown(66))
+    x+=5;
+
+  if (keyIsDown(1))
+    y-=5;
+
+  if (keyIsDown(2))
+    y+=5;
+
+  clear();
+  fill(255, 0, 0);
+  ellipse(x, y, 50, 50);
 
 }
 
 
-
+function redButton(){
+	frameRate(exponent -= speed )
+}
 
 
 //===============Quick flashes
