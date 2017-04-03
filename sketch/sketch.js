@@ -1,15 +1,13 @@
+
+console.log('quicktest');
+console.log('serial list:');
+p5.serial().list(function(data) {
+  data.ports.forEach(function(port) {
+    console.log(port.comName);
+  });
+});
+
 // var b = p5.board('/dev/cu.usbmodem1421', 'arduino');
-var express = require('express')
-var app = express();
-//
-var port = process.env.PORT || 4000
-var server = require('http').Server( app )
-server.listen(port, function(){
-  console.log("App is running on port" + port);
-})
-
-app.use ( express.static('sketch') )
-
 
 var led;
 var lightStatus = false;
