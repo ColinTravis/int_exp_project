@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Collaborative Drawing Space",
   "scripts": {
-    "start": "node ./node_modules/.bin/bots-go -d '/sketch'",
+    "start": "node ./app.js -d '/sketch'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
