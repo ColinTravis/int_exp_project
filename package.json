@@ -19,6 +19,11 @@
   "dependencies": {
     "express": "^4.15.2",
     "p5bots-server": "^0.3.2",
-    "socket.io": "^1.7.3"
+    "brfs": "^1.4.0",
+    "commander": "^2.8.1",
+    "firmata": "^0.14.1",
+    "nanotimer": "^0.3.10",
+    "serialport": "^4.0.7",
+    "socket.io": "^1.3.6"
   }
 }
