@@ -1,8 +1,8 @@
 {
-  "name": "fine_Print",
+  "name": "p5bots",
   "version": "0.3.2",
-  "description": "Looking at the Fine Print",
-  "repository": "https://github.com/ColinTravis/int_exp_project",
+  "description": "Get sensor data into your p5 sketches",
+  "repository": "https://github.com/sarahgp/p5bots",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/p5bots-server/app.js -d 'examples'"
@@ -34,5 +34,7 @@
     "nanotimer": "^0.3.10",
     "serialport": "^4.0.7",
     "socket.io": "^1.3.6"
-  }
+  },
+  "author": "Sarah Groff-Palermo",
+  "license": "LGPL-2.1"
 }
