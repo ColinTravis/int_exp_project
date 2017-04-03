@@ -37,7 +37,8 @@ exports.index = index = program.file || (directory + '/index.html');
 // ENABLE FOR PRIVATE TESTING
 // server.listen(8000);
 
-var port = process.env.PORT || 8000
+// var port = process.env.PORT || 8000
+var port = process.env.PORT
 
 server.listen(port, function(){
   console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
