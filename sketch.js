@@ -1,4 +1,4 @@
-// var b = p5.board('/dev/cu.usbmodem1421', 'arduino');
+var b = p5.board('/dev/cu.usbmodem1421', 'arduino');
 var led;
 var lightStatus = false;
 var cfade3 = 138;
@@ -8,11 +8,11 @@ var fade = 'fade';
 var tone;
 
 function preload(){
-  tone = loadSound("/assets/sound/tone.mp4")
+  tone = loadSound("/assets/sounds/ominous_tone.mp3")
 }
 
 function setup() {
- // led = b.pin(9, 'LED');
+ led = b.pin(9, 'LED');
  createCanvas(windowWidth,windowHeight)
  background(70,70,70)
  tone.loop()
@@ -41,12 +41,12 @@ function setup() {
 
 function draw(){
   if (keyIsDown(65)){
-    // led.off();
-    tone.pause()
+    led.off();
+    tone.stop()
     // lightStatus = true;
   } else {
-    // led.on();
-    // led.write(200)
+    led.on();
+    led.write(200)
     tone.play()
     // lightStatus = false;
   }
