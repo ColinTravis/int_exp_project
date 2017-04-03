@@ -3,7 +3,7 @@
 
 var express    = require('express'),
     app        = express(),
-    server     = require('http').Server(app),
+    server     = require('https').Server(app),
     io         = require('socket.io')(server), // jshint ignore:line
     Board      = require('firmata'),
     program    = require('commander'),
