@@ -1,84 +1,57 @@
-var osc;
-var playing = false;
-var value = 0;
-var x= 100;
-var y = 100;
-var spinner = [];
-var exponent = 0.0;
-var speed = 0.5;
+// var b = p5.board('/dev/cu.usbmodem1421', 'arduino');
+var led;
+var lightStatus = false;
+var cfade3 = 138;
+var cfade2 = 20;
+var cfade1 = 58;
+var fade = 'fade';
+var tone;
+
+function preload(){
+  tone = loadSound("/assets/sound/tone.mp4")
+}
 
 function setup() {
-	createCanvas(windowWidth,windowHeight)
-	rectMode(CENTER);
-	textAlign(CENTER);
-	backgroundColor = color(129, 130, 128)
-
-	osc = new p5.Oscillator();
-	osc.setType('sine');
-	osc.freq(240);
-	osc.amp(0);
-	osc.start();
-	// frameRate(5)
-	frameRate(30)
-
-	spinner = ["image1.jpg","image2.jpg","image3.jpg","image4.jpg","image5.jpg"]
+ // led = b.pin(9, 'LED');
+ createCanvas(windowWidth,windowHeight)
+ background(70,70,70)
+ tone.loop()
 }
 
-function redScreen(){
-	if (keyIsDown(65)) {
-		if (!playing) {
-			osc.amp(5,0.5);
-			playing = true;
-			backgroundColor = color(255,0,0);
-		} else {
-			osc.amp(0, 0.5);
-			playing = false;
-			backgroundColor = color(0,0,0);
-		}
-	}
-}
-
-function draw(){
-	// ellipse(windowWidth/2,windowHeight/2,50,50)
-	background(backgroundColor)
-
-
-// ========= TOGGLES RED SCREEN AND SINE
-// redScreen()
-
-// ============= FOR MOVING OBJECT ON SCREEN (NEEDS FRAMERATE ADJUSTED)
-	if (keyIsDown(65))
-    x-=5;
-
-  if (keyIsDown(66))
-    x+=5;
-
-  if (keyIsDown(1))
-    y-=5;
-
-  if (keyIsDown(2))
-    y+=5;
-
-  clear();
-  fill(255, 0, 0);
-  ellipse(x, y, 50, 50);
-
-}
-
-
-function redButton(){
-	frameRate(exponent -= speed )
-}
-
-
-//===============Quick flashes
-// function keyPressed() {
-//   if (keyCode === 65) {
-//     background(255,0,0) = 255;
-//   } else if (keyCode === RIGHT_ARROW) {
-//     background(0,0,255)
+// function draw(){
+//   console.log(lightStatus);
+//   if (lightStatus === true) {
+//     background(58, 20, 138)
+//   }else if (lightStatus === false){
+//     background(0,0,0)
+//   }else if (lightStatus === fade) {
+//     background(cfade1,cfade2,cfade3)
+//     if (cfade3 <= 0) {
+//       cfade3 = 138;
+//       cfade2 = 20;
+//       cfade1 = 58;
+//     }else {
+//     cfade1--
+//     cfade2--
+//     cfade3--
 //   }
 // }
+//
+// }
+
+function draw(){
+  if (keyIsDown(65)){
+    // led.off();
+    tone.pause()
+    // lightStatus = true;
+  } else {
+    // led.on();
+    // led.write(200)
+    tone.play()
+    // lightStatus = false;
+  }
+}
+
 
 function windowResized(){
 	resizeCanvas(windowWidth,windowHeight)

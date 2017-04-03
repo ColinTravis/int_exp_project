@@ -1,4 +1,4 @@
-/*! p5.js v0.5.7 February 08, 2017 */
+/*! p5.js v0.5.5 December 05, 2016 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.p5 = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
 },{}],2:[function(_dereq_,module,exports){
@@ -8839,10 +8839,7 @@ var p5 = function(sketch, node, sync) {
    * asynchronous loading of external files. If a preload function is
    * defined, setup() will wait until any load calls within have finished.
    * Nothing besides load calls should be inside preload (loadImage,
-   * loadJSON, loadFont, loadStrings, etc).<br><br>
-   * By default the text "loading..." will be displayed. To make your own
-   * loading page, include an HTML element with id "p5_loading" in your
-   * page. More information <a href="http://bit.ly/2kQ6Nio">here</a>.
+   * loadJSON, loadFont, loadStrings, etc).
    *
    * @method preload
    * @example
@@ -9007,6 +9004,16 @@ var p5 = function(sketch, node, sync) {
       }
     }
 
+    // Always create a default canvas.
+    // Later on if the user calls createCanvas, this default one
+    // will be replaced
+    this.createCanvas(
+      this._defaultCanvasSize.width,
+      this._defaultCanvasSize.height,
+      'p2d',
+      true
+    );
+
     var userPreload = this.preload || window.preload; // look for "preload"
     if (userPreload) {
 
@@ -9083,16 +9090,6 @@ var p5 = function(sketch, node, sync) {
   };
 
   this._setup = function() {
-
-    // Always create a default canvas.
-    // Later on if the user calls createCanvas, this default one
-    // will be replaced
-    this.createCanvas(
-      this._defaultCanvasSize.width,
-      this._defaultCanvasSize.height,
-      'p2d',
-      true
-    );
 
     // return preload functions to their normal vals if switched by preload
     var context = this._isGlobal ? window : this;
@@ -10119,8 +10116,7 @@ p5.prototype.cursor = function(type, x, y) {
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
       coords = x + ' ' + y;
     }
-    if ((type.substring(0, 7) === 'http://') ||
-        (type.substring(0, 8) === 'https://')) {
+    if (type.substring(0, 6) !== 'http://') {
       // Image (absolute url)
       cursor = 'url(' + type + ') ' + coords + ', auto';
     } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
@@ -11837,15 +11833,6 @@ p5.Graphics = function(w, h, renderer, pInst) {
 };
 
 p5.Graphics.prototype = Object.create(p5.Element.prototype);
-
-p5.Graphics.prototype.remove = function() {
-  if (this.elt.parentNode) {
-    this.elt.parentNode.removeChild(this.elt);
-  }
-  for (var elt_ev in this._events) {
-    this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
-  }
-};
 
 module.exports = p5.Graphics;
 
@@ -15521,7 +15508,7 @@ p5.prototype.setShakeThreshold = function(val){
  * 0.5.
  * @method deviceMoved
  * @example
- * <div class="norender">
+ * <div>
  * <code>
  * // Run this example on a mobile device
  * // Move the device around
@@ -15556,7 +15543,7 @@ p5.prototype.setShakeThreshold = function(val){
  *
  * @method deviceTurned
  * @example
- * <div class="norender">
+ * <div>
  * <code>
  * // Run this example on a mobile device
  * // Rotate the device by 90 degrees
@@ -15611,7 +15598,7 @@ p5.prototype.setShakeThreshold = function(val){
  * the threshold value. The default threshold is set to 30.
  * @method deviceShaken
  * @example
- * <div class="norender">
+ * <div>
  * <code>
  * // Run this example on a mobile device
  * // Shake the device to change the value.
@@ -15978,16 +15965,12 @@ p5.prototype._onkeydown = function (e) {
  */
 p5.prototype._onkeyup = function (e) {
   var keyReleased = this.keyReleased || window.keyReleased;
+  this._setProperty('isKeyPressed', false);
+  this._setProperty('keyIsPressed', false);
+  this._setProperty('_lastKeyCodeTyped', null);
   downKeys[e.which] = false;
   //delete this._downKeys[e.which];
   var key = String.fromCharCode(e.which);
-
-  if(areDownKeys()) {
-    this._setProperty('isKeyPressed', false);
-    this._setProperty('keyIsPressed', false);
-  }
-
-  this._setProperty('_lastKeyCodeTyped', null);
   if (!key) {
     key = e.which;
   }
@@ -16110,24 +16093,6 @@ p5.prototype._onblur = function (e) {
 p5.prototype.keyIsDown = function(code) {
   return downKeys[code];
 };
-
-/**
- * The checkDownKeys function returns a boolean true if any keys pressed
- * and a false if no keys are currently pressed.
-
- * Helps avoid instances where a multiple keys are pressed simultaneously and
- * releasing a single key will then switch the
- * keyIsPressed property to true.
- * @private
-**/
-function areDownKeys() {
-  for (var key in downKeys) {
-    if (downKeys[key] === true ) {
-      return true;
-    }
-  }
-  return false;
-}
 
 module.exports = p5;
 
@@ -16487,7 +16452,7 @@ p5.prototype.mouseIsPressed = false;
 p5.prototype.isMousePressed = false; // both are supported
 
 p5.prototype._updateNextMouseCoords = function(e) {
-  if(this._curElement !== null && (!e.touches || e.touches.length>0)) {
+  if(this._curElement !== null) {
     var mousePos = getMousePos(this._curElement.elt, this.width, this.height, e);
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
@@ -16509,13 +16474,6 @@ p5.prototype._updateMouseCoords = function() {
 };
 
 function getMousePos(canvas, w, h, evt) {
-  if (evt && !evt.clientX) { // use touches if touch and not mouse
-    if (evt.touches) {
-      evt = evt.touches[0];
-    } else if (evt.changedTouches) {
-      evt = evt.changedTouches[0];
-    }
-  }
   var rect = canvas.getBoundingClientRect();
   var sx = canvas.scrollWidth / w;
   var sy = canvas.scrollHeight / h;
@@ -16523,8 +16481,7 @@ function getMousePos(canvas, w, h, evt) {
     x: (evt.clientX - rect.left) / sx,
     y: (evt.clientY - rect.top) / sy,
     winX: evt.clientX,
-    winY: evt.clientY,
-    id: evt.identifier
+    winY: evt.clientY
   };
 }
 
@@ -17822,7 +17779,7 @@ var frames = [];
  * var pink = color(255, 102, 204);
  * img = createImage(66, 66);
  * img.loadPixels();
- * var d = pixelDensity();
+ * var d = pixelDensity;
  * var halfImage = 4 * (width * d) * (height/2 * d);
  * for (var i = 0; i < halfImage; i+=4) {
  *   img.pixels[i] = red(pink);
@@ -18250,7 +18207,7 @@ function _sAssign(sVal, iVal) {
 /**
  * @method image
  * @param  {p5.Image} img
- * @param  {Number}   dx     the x-coordinate in the destination canvas at
+ * @param  {Number}   dx     the -xcoordinate in the destination canvas at
  *                           which to place the top-left corner of the
  *                           source image
  * @param  {Number}   dy     the y-coordinate in the destination canvas at
@@ -18298,16 +18255,8 @@ p5.prototype.image =
   _sw = _sAssign(_sw, defW);
   _sh = _sAssign(_sh, defH);
 
-
-  // This part needs cleanup and unit tests
-  // see issues https://github.com/processing/p5.js/issues/1741
-  // and https://github.com/processing/p5.js/issues/1673
   var pd = 1;
-
-  if (img.elt && img.elt.videoWidth && img.elt.style.width && !img.canvas) {
-    pd = img.elt.videoWidth / parseInt(img.elt.style.width, 10);
-  }
-  else if (img.elt && img.elt.width && img.elt.style.width) {
+  if (img.elt && img.elt.width) {
     pd = img.elt.width / parseInt(img.elt.style.width, 10);
   }
 
@@ -18660,19 +18609,18 @@ p5.Image = function(width, height){
    * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
    * values of the pixel at (1, 0). More generally, to set values for a pixel
    * at (x, y):
-   * ```javascript
-   * var d = pixelDensity;
+   * <code><pre>var d = pixelDensity;
    * for (var i = 0; i < d; i++) {
    *   for (var j = 0; j < d; j++) {
    *     // loop over
-   *     idx = 4 * ((y * d + j) * width * d + (x * d + i));
+   *     idx = 4*((y * d + j) * width * d + (x * d + i));
    *     pixels[idx] = r;
    *     pixels[idx+1] = g;
    *     pixels[idx+2] = b;
    *     pixels[idx+3] = a;
    *   }
    * }
-   * ```
+   * </pre></code>
    * <br><br>
    * Before accessing this array, the data must loaded with the loadPixels()
    * function. After the array data has been modified, the updatePixels()
@@ -19012,7 +18960,7 @@ p5.Image.prototype.copy = function () {
 
 /**
  * Masks part of an image from displaying by loading another
- * image and using it's alpha channel as an alpha channel for
+ * image and using it's blue channel as an alpha channel for
  * this image.
  *
  * @method mask
@@ -19279,7 +19227,7 @@ _dereq_('../color/p5.Color');
  * values of the pixel at (0, 0). The second four values (indices 4-7) will
  * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
  * set values for a pixel at (x, y):
- * ```javascript
+ * <code><pre>
  * var d = pixelDensity;
  * for (var i = 0; i < d; i++) {
  *   for (var j = 0; j < d; j++) {
@@ -19291,7 +19239,8 @@ _dereq_('../color/p5.Color');
  *     pixels[idx+3] = a;
  *   }
  * }
- * ```
+ * </pre></code>
+ *
  * <p>While the above method is complex, it is flexible enough to work with
  * any pixelDensity. Note that set() will automatically take care of
  * setting all the appropriate values in pixels[] for a given (x, y) at
@@ -19629,12 +19578,7 @@ p5.prototype.copy = function () {
  *
  */
 p5.prototype.filter = function(operation, value) {
-  if(this.canvas !== undefined) {
-    Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
-  }
-  else {
-    Filters.apply(this.elt, Filters[operation.toLowerCase()], value);
-  }
+  Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
 };
 
 /**
@@ -21288,11 +21232,7 @@ p5.prototype.downloadFile = function (href, fName, extension) {
   a.download = filename;
 
   // Firefox requires the link to be added to the DOM before click()
-  a.onclick = function(e) {
-    destroyClickedElement(e);
-    e.stopPropagation();
-  };
-
+  a.onclick = destroyClickedElement;
   a.style.display = 'none';
   document.body.appendChild(a);
 
@@ -24812,7 +24752,7 @@ p5.Vector.prototype.copy = function () {
  * <code>
  * var v = createVector(1, 2, 3);
  * v.add(4,5,6);
- * // v's components are set to [5, 7, 9]
+ * // v's compnents are set to [5, 7, 9]
  * </code>
  * </div>
  * <div class="norender">
@@ -24863,7 +24803,7 @@ p5.Vector.prototype.add = function (x, y, z) {
  * <code>
  * var v = createVector(4, 5, 6);
  * v.sub(1, 1, 1);
- * // v's components are set to [3, 4, 5]
+ * // v's compnents are set to [3, 4, 5]
  * </code>
  * </div>
  *
@@ -24874,7 +24814,7 @@ p5.Vector.prototype.add = function (x, y, z) {
  * var v2 = createVector(1, 2, 3);
  *
  * var v3 = p5.Vector.sub(v1, v2);
- * // v3 has components [1, 1, 1]
+ * // v3 has compnents [1, 1, 1]
  * </code>
  * </div>
  */
@@ -24911,7 +24851,7 @@ p5.Vector.prototype.sub = function (x, y, z) {
  * <code>
  * var v = createVector(1, 2, 3);
  * v.mult(2);
- * // v's components are set to [2, 4, 6]
+ * // v's compnents are set to [2, 4, 6]
  * </code>
  * </div>
  *
@@ -24920,7 +24860,7 @@ p5.Vector.prototype.sub = function (x, y, z) {
  * // Static method
  * var v1 = createVector(1, 2, 3);
  * var v2 = p5.Vector.mult(v1, 2);
- * // v2 has components [2, 4, 6]
+ * // v2 has compnents [2, 4, 6]
  * </code>
  * </div>
  */
@@ -24944,7 +24884,7 @@ p5.Vector.prototype.mult = function (n) {
  * <div class="norender">
  * <code>
  * var v = createVector(6, 4, 2);
- * v.div(2); //v's components are set to [3, 2, 1]
+ * v.div(2); //v's compnents are set to [3, 2, 1]
  * </code>
  * </div>
  *
@@ -24953,7 +24893,7 @@ p5.Vector.prototype.mult = function (n) {
  * // Static method
  * var v1  = createVector(6, 4, 2);
  * var v2 = p5.Vector.div(v, 2);
- * // v2 has components [3, 2, 1]
+ * // v2 has compnents [3, 2, 1]
  * </code>
  * </div>
  */
@@ -25126,9 +25066,9 @@ p5.Vector.prototype.dist = function (v) {
  * <div class="norender">
  * <code>
  * var v = createVector(10, 20, 2);
- * // v has components [10.0, 20.0, 2.0]
+ * // v has compnents [10.0, 20.0, 2.0]
  * v.normalize();
- * // v's components are set to
+ * // v's compnents are set to
  * // [0.4454354, 0.8908708, 0.089087084]
  * </code>
  * </div>
@@ -25149,9 +25089,9 @@ p5.Vector.prototype.normalize = function () {
  * <div class="norender">
  * <code>
  * var v = createVector(10, 20, 2);
- * // v has components [10.0, 20.0, 2.0]
+ * // v has compnents [10.0, 20.0, 2.0]
  * v.limit(5);
- * // v's components are set to
+ * // v's compnents are set to
  * // [2.2271771, 4.4543543, 0.4454354]
  * </code>
  * </div>
@@ -25175,10 +25115,10 @@ p5.Vector.prototype.limit = function (max) {
  * @example
  * <div class="norender">
  * <code>
- * var v = createVector(10, 20, 2);
- * // v has components [10.0, 20.0, 2.0]
- * v.setMag(10);
- * // v's components are set to [6.0, 8.0, 0.0]
+ * var v1 = createVector(10, 20, 2);
+ * // v has compnents [10.0, 20.0, 2.0]
+ * v1.setMag(10);
+ * // v's compnents are set to [6.0, 8.0, 0.0]
  * </code>
  * </div>
  */
@@ -25229,19 +25169,19 @@ p5.Vector.prototype.heading = function () {
  * <div class="norender">
  * <code>
  * var v = createVector(10.0, 20.0);
- * // v has components [10.0, 20.0, 0.0]
+ * // v has compnents [10.0, 20.0, 0.0]
  * v.rotate(HALF_PI);
- * // v's components are set to [-20.0, 9.999999, 0.0]
+ * // v's compnents are set to [-20.0, 9.999999, 0.0]
  * </code>
  * </div>
  */
 p5.Vector.prototype.rotate = function (a) {
-  var newHeading = this.heading() + a;
   if (this.p5) {
     if (this.p5._angleMode === constants.DEGREES) {
-      newHeading = polarGeometry.degreesToRadians(newHeading);
+      a = polarGeometry.degreesToRadians(a);
     }
   }
+  var newHeading = this.heading() + a;
   var mag = this.mag();
   this.x = Math.cos(newHeading) * mag;
   this.y = Math.sin(newHeading) * mag;
@@ -26810,7 +26750,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 
         var gm = glyph.getMetrics();
 
-        if (glyph.name !== 'space' && glyph.unicode !== 32) {
+        if (glyph.name !== 'space') {
 
           xCoords.push(gX + (gm.xMax * scale));
           yCoords.push(gY + (-gm.yMin * scale));
@@ -29157,10 +29097,6 @@ p5.prototype.camera = function(x, y, z){
  *
  */
 p5.prototype.perspective = function(fovy,aspect,near,far) {
-  fovy = fovy || (60 / 180 * this.PI);
-  aspect = aspect || (this.width/this.height);
-  near = near || ((this.height/2.0) / this.tan(fovy/2.0) * 0.1);
-  far = far || ((this.height/2.0) / this.tan(fovy/2.0) * 10);
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.perspective(fovy,aspect,near,far);
   this._renderer._curCamera = 'custom';
@@ -29205,12 +29141,6 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  *
  */
 p5.prototype.ortho = function(left,right,bottom,top,near,far) {
-  left = left || (-this.width/2);
-  right = right || (this.width/2);
-  bottom = bottom || (-this.height/2);
-  top = top || (this.height/2);
-  near = near || 0;
-  far = far || Math.max(this.width, this.height);
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
   this._renderer._curCamera = 'custom';
@@ -29752,7 +29682,7 @@ var p5 = _dereq_('../core/core');
 /**
  * Normal material for geometry. You can view all
  * possible materials in this
- * <a href="https://http://p5js.org/examples/3d-materials.html">example</a>.
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method normalMaterial
  * @return {p5}                the p5 object
  * @example
@@ -29781,7 +29711,7 @@ p5.prototype.normalMaterial = function(){
 
 /**
  * Texture for geometry.  You can view other possible materials in this
- * <a href="https://http://p5js.org/examples/3d-materials.html">example</a>.
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method texture
  * @param {p5.Image | p5.MediaElement | p5.Graphics} tex 2-dimensional graphics
  *                    to render as texture
@@ -29954,7 +29884,7 @@ p5.RendererGL.prototype._bind = function(tex, data){
 /**
  * Ambient material for geometry with a given color. You can view all
  * possible materials in this
- * <a href="https://http://p5js.org/examples/3d-materials.html">example</a>.
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method  ambientMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -30008,7 +29938,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 /**
  * Specular material for geometry with a given color. You can view all
  * possible materials in this
- * <a href="https://http://p5js.org/examples/3d-materials.html">example</a>.
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method specularMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -31841,7 +31771,7 @@ _dereq_('./p5.Geometry');
  *
  * function draw(){
  *   background(200);
- *   plane(50, 50);
+ *   plane(200, 200);
  * }
  * </code>
  * </div>
