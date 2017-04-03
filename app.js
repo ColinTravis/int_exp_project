@@ -194,11 +194,11 @@ var setup = exports.setup = function(io) {
     }
 
     // Serial does not require firmata board
-    var serial = require('./lib/serial.js');
-    serial.init(socket);
-    serial.read(socket);
-    serial.write(socket);
-    serial.list(socket);
+    // var serial = require('./lib/serial.js');
+    // serial.init(socket);
+    // serial.read(socket);
+    // serial.write(socket);
+    // serial.list(socket);
 
   });
 };
