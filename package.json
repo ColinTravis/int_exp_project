@@ -1,7 +1,7 @@
 {
   "name": "int_exp_project",
   "version": "1.0.0",
-  "description": "Collaborative Drawing Space",
+  "description": "",
   "scripts": {
     "start": "node ./app.js -d './sketch'",
     "test": "echo \"Error: no test specified\" && exit 1"
