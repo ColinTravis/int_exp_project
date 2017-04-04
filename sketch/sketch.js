@@ -15,7 +15,7 @@ function preload(){
 }
 
 function setup() {
- // led = b.pin(9, 'LED');
+ led = b.pin(9, 'LED');
  createCanvas(windowWidth,windowHeight)
  background(70,70,70)
  // tone.loop()
