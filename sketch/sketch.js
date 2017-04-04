@@ -17,7 +17,7 @@ function preload(){
 function setup() {
  led = b.pin(9, 'LED');
  createCanvas(windowWidth,windowHeight)
- background(70,70,70)
+ // background(70,70,70)
  // tone.loop()
 }
 
@@ -25,14 +25,14 @@ function draw(){
   if (keyIsDown(65)){
     led.off();
     tone.stop()
-    background(255,0,0)
+    // background(255,0,0)
     console.log("Key is down!");
     // lightStatus = true;
   } else {
     led.on();
     led.write(200)
     tone.play()
-    background(0,0,0)
+    // background(0,0,0)
     console.log("Key is up!");
     // lightStatus = false;
   }
