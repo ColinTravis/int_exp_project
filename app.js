@@ -133,44 +133,65 @@ var setup = exports.setup = function(io) {
 
     // Special functions
 
-    // function initializeSpecialFuncs(board) {
+    function initializeSpecialFuncs(board) {
+
+      // LED
+      var led = require('./lib/led.js');
+      led.blink(board, socket);
+      led.fade(board, socket);
+
+      // RGB
+      var rgb = require('./lib/rgb.js');
+      rgb.write(board, socket);
+      rgb.read(board, socket);
+      rgb.blink(board, socket);
+      rgb.fade(board, socket);
+
+      // Servo
+      var servo = require('./lib/servo.js');
+      servo.range(board, socket);
+      servo.sweep(board, socket);
+
+      // Piezo
+      var piezo = require('./lib/piezo.js');
+      piezo.tone(board, socket);
 
       // User defined, if present
 
-    //   var filepath;
-    //
-    //   if (program.ufilename) {
-    //     filepath = program.ufilename;
-    //   } else if (program.ufilepath) {
-    //     var userpath = program.ufilepath || __dirname;
-    //     filepath = userpath + '/user.js';
-    //   }
-    //
-    //   if (filepath) {
-    //     filepath = path.normalize(filepath);
-    //     fs.stat(filepath, function(err, stats){
-    //       if (err == null) {
-    //
-    //         var reqPath = makeAbsolute(filepath);
-    //
-    //         var user = require(reqPath),
-    //             keys = Object.keys(user);
-    //
-    //         keys.forEach(function(key){
-    //           user[key](board, socket);
-    //         });
-    //
-    //       } else if (err.code === 'ENOENT'){
-    //         throw new Error(filepath +
-    //           ' does not seem to exist. Maybe it is a ghost.');
-    //
-    //       } else {
-    //         console.log(err);
-    //       }
-    //     });
-    //   }
-    //
-    // }
+      var filepath;
+
+      if (program.ufilename) {
+        filepath = program.ufilename;
+      } else if (program.ufilepath) {
+        var userpath = program.ufilepath || __dirname;
+        filepath = userpath + '/user.js';
+      }
+
+      if (filepath) {
+        filepath = path.normalize(filepath);
+        fs.stat(filepath, function(err, stats){
+          if (err == null) {
+
+            var reqPath = makeAbsolute(filepath);
+
+            var user = require(reqPath),
+                keys = Object.keys(user);
+
+            keys.forEach(function(key){
+              user[key](board, socket);
+            });
+
+          } else if (err.code === 'ENOENT'){
+            throw new Error(filepath +
+              ' does not seem to exist. Maybe it is a ghost.');
+
+          } else {
+            console.log(err);
+          }
+        });
+      }
+
+    }
 
     // Serial does not require firmata board
     // var serial = require('./lib/serial.js');
@@ -179,7 +200,7 @@ var setup = exports.setup = function(io) {
     // serial.write(socket);
     // serial.list(socket);
 
-  // });
+  });
 };
 
 setup(io);
